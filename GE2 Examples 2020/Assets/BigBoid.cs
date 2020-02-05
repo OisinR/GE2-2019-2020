@@ -21,6 +21,9 @@ public class BigBoid : MonoBehaviour
     public Vector3 target;
     public Transform targetTransform;
 
+    [Range(0.0f,10f)]
+    public float banking = 0.1f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -89,7 +92,9 @@ public class BigBoid : MonoBehaviour
         speed = velocity.magnitude;
         if (speed > 0)
         {
-            transform.forward = velocity;
+            Vector3 tempUp = Vector3.Lerp(transform.up, Vector3.up + (acceleration * banking),Time.deltaTime * 3.0f);
+            transform.LookAt(transform.position + velocity, tempUp);
+            //transform.forward = velocity;
         }
     }
 }
