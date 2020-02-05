@@ -14,8 +14,10 @@ public class BigBoid : MonoBehaviour
     public float maxForce = 10;
 
     public float speed = 0;
+    public float slowingDistance = 10;
 
     public bool seekEnabled = false;
+    public bool arriveEnabled = false;
     public Vector3 target;
     public Transform targetTransform;
 
@@ -37,6 +39,19 @@ public class BigBoid : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + velocity);
     }
 
+    Vector3 Arrive(Vector3 target)
+    {
+        Vector3 toTarget = target - transform.position;
+        float dist = toTarget.magnitude;
+
+        float ramped = (dist / slowingDistance) * maxSpeed;
+        float clamped = Mathf.Min(ramped, maxSpeed);
+        Vector3 desired = (toTarget / dist) * clamped;
+
+        return desired - velocity;
+    }
+
+
     Vector3 Seek(Vector3 target)
     {
         Vector3 toTarget = target - transform.position;
@@ -51,6 +66,10 @@ public class BigBoid : MonoBehaviour
         if (seekEnabled)
         {
             force += Seek(target);
+        }
+        if(arriveEnabled)
+        {
+            force += Arrive(target);
         }
         return force;
     }
